@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Dr. Derm</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .page-header {
+            background: var(--gradient);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .filters {
+            background: white;
+            padding: 32px;
+            margin: 40px 0;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+        .filter-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-group span {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-right: 8px;
+        }
+        .filter-btn {
+            padding: 12px 24px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 25px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        .filter-btn.active {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .filter-btn.active:hover {
+            color: white;
+        }
+        .search-results {
+            background: rgba(37, 99, 235, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            border-left: 4px solid var(--primary);
+        }
+        .no-products {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+        .no-products i {
+            font-size: 4rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        .no-products h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/logo dr derm.png" alt="Dr. Derm" class="logo-img">
+                </div>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/produtos">Produtos</a></li>
+                        <li><a href="/sobre">Sobre</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <div class="search-box">
+                        <form action="/produtos" method="GET">
+                            <input type="text" name="search" placeholder="Buscar produtos..." value="<%= search || '' %>">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <% if (user) { %>
+                            <a href="/dashboard" class="user-link">
+                                <i class="fas fa-user"></i> <%= user.nome %>
+                            </a>
+                            <a href="/logout" class="logout-link">Sair</a>
+                        <% } else { %>
+                            <a href="/login" class="login-link">
+                                <i class="fas fa-sign-in-alt"></i> Entrar
+                            </a>
+                            <a href="/cadastro" class="register-link">Cadastrar</a>
+                        <% } %>
+                    </div>
+                    
+                    <div class="cart-icon">
+                        <a href="/carrinho">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cart-count"><%= cartCount || 0 %></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-box-open"></i> Nossos Produtos</h1>
+            <p>Produtos profissionais de alta qualidade para estética e botox</p>
+        </div>
+    </section>
+
+    <main>
+        <div class="container">
+            <div class="filters">
+                <div class="filter-group">
+                    <span><i class="fas fa-filter"></i> Filtrar por categoria:</span>
+                    <a href="/produtos" class="filter-btn <%= !categoria ? 'active' : '' %>">
+                        <i class="fas fa-th"></i> Todos
+                    </a>
+                    <% categorias.forEach(cat => { %>
+                        <a href="/produtos?categoria=<%= cat.id %>" 
+                           class="filter-btn <%= categoria == cat.id ? 'active' : '' %>">
+                            <%= cat.nome %>
+                        </a>
+                    <% }) %>
+                </div>
+            </div>
+            
+            <% if (search) { %>
+                <div class="search-results">
+                    <h3><i class="fas fa-search"></i> Resultados para: "<strong><%= search %></strong>"</h3>
+                    <p>Encontramos <%= produtos.length %> produto<%= produtos.length !== 1 ? 's' : '' %> para sua busca</p>
+                </div>
+            <% } %>
+            
+            <% if (produtos.length === 0) { %>
+                <div class="no-products">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhum produto encontrado</h3>
+                    <p>Tente ajustar os filtros ou fazer uma nova busca.</p>
+                    <a href="/produtos" class="btn-primary" style="margin-top: 20px;">
+                        <i class="fas fa-arrow-left"></i> Ver Todos os Produtos
+                    </a>
+                </div>
+            <% } else { %>
+                <div class="products-grid">
+                    <% produtos.forEach(produto => { %>
+                        <div class="product-card">
+                            <% if (produto.promocao) { %>
+                                <div class="new-badge">Promoção</div>
+                            <% } %>
+                            
+                            <img src="#" alt="<%= produto.nome %>" onerror="this.src='/images/products/default.svg'">
+                            
+                            <h3><%= produto.nome %></h3>
+                            <p class="brand"><%= produto.marca %> - <%= produto.modelo %></p>
+                            
+                            <% if (produto.indicacao) { %>
+                                <p class="indication"><%= produto.indicacao %></p>
+                            <% } %>
+                            
+                            <% if (produto.vencimento) { %>
+                                <p class="expiry">Vencimento: <%= new Date(produto.vencimento).toLocaleDateString('pt-BR') %></p>
+                            <% } %>
+                            
+                            <div class="price">
+                                <% if (produto.preco_original) { %>
+                                    <span class="old-price">R$ <%= produto.preco_original.toFixed(2).replace('.', ',') %></span>
+                                <% } %>
+                                <span class="current-price">R$ <%= produto.preco.toFixed(2).replace('.', ',') %></span>
+                            </div>
+                            
+                            <p class="stock">
+                                <% if (produto.estoque > 10) { %>
+                                    <i class="fas fa-check-circle" style="color: var(--accent);"></i> Em estoque
+                                <% } else if (produto.estoque > 0) { %>
+                                    <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Últimas <%= produto.estoque %> unidades
+                                <% } else { %>
+                                    <i class="fas fa-times-circle" style="color: #ef4444;"></i> Sem estoque
+                                <% } %>
+                            </p>
+                            
+                            <button class="btn-cart" onclick="addToCart(<%= produto.id %>)" 
+                                    <%= produto.estoque <= 0 ? 'disabled' : '' %>>
+                                <% if (produto.estoque <= 0) { %>
+                                    <i class="fas fa-ban"></i> Indisponível
+                                <% } else { %>
+                                    <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                                <% } %>
+                            </button>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Dr. Derm</h3>
+                    <p>Produtos profissionais para estética e botox, exclusivos para profissionais de saúde certificados.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="/produtos"><i class="fas fa-box"></i> Produtos</a></li>
+                        <li><a href="/sobre"><i class="fas fa-info-circle"></i> Sobre Nós</a></li>
+                        <li><a href="/termos"><i class="fas fa-file-contract"></i> Termos de Uso</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Formas de Pagamento</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-pix" title="PIX"></i>
+                        <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                        <i class="fas fa-university" title="Transferência Bancária"></i>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p><i class="fab fa-whatsapp"></i> WhatsApp: (11) 99396-7438</p>
+                    <p><i class="fas fa-envelope"></i> contato@drderm.com.br</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Dr. Derm. Todos os direitos reservados. | Produtos exclusivos para profissionais de saúde</p>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="https://wa.me/5511993967438?text=Oi%2C%20gostaria%20de%20um%20produto%20ou%20um%20auxilio." class="whatsapp-float" target="_blank" title="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

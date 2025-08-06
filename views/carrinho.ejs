@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - Dr. Derm</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .page-header {
+            background: var(--gradient);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .cart-container {
+            max-width: 1000px;
+            margin: -40px auto 0;
+            position: relative;
+            z-index: 10;
+        }
+        .cart-item {
+            background: white;
+            padding: 32px;
+            margin-bottom: 24px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        .cart-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .cart-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+        .item-info {
+            flex: 1;
+        }
+        .item-info h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        .item-info .brand {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .item-info .price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .item-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            min-width: 120px;
+        }
+        .quantity-display {
+            background: rgba(37, 99, 235, 0.1);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .subtotal {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .cart-summary {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            position: sticky;
+            top: 100px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .summary-row:last-child {
+            border-bottom: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .free-shipping {
+            color: var(--accent);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 80px 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+        .empty-cart i {
+            font-size: 5rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            opacity: 0.5;
+        }
+        .empty-cart h3 {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .empty-cart p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+        }
+        .checkout-btn {
+            background: var(--gradient);
+            color: white;
+            padding: 18px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin-top: 24px;
+        }
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(37, 99, 235, 0.3);
+        }
+        .professional-notice {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .professional-notice i {
+            color: #ef4444;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+        .professional-notice p {
+            color: #ef4444;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        .cart-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+            align-items: start;
+        }
+        @media (max-width: 1024px) {
+            .cart-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .cart-summary {
+                position: static;
+            }
+        }
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+                text-align: center;
+                padding: 24px;
+            }
+            .item-controls {
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/logo dr derm.png" alt="Dr. Derm" class="logo-img">
+                </div>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/produtos">Produtos</a></li>
+                        <li><a href="/sobre">Sobre</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <div class="search-box">
+                        <form action="/produtos" method="GET">
+                            <input type="text" name="search" placeholder="Buscar produtos...">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <% if (user) { %>
+                            <a href="/dashboard" class="user-link">
+                                <i class="fas fa-user"></i> <%= user.nome %>
+                            </a>
+                            <a href="/logout" class="logout-link">Sair</a>
+                        <% } else { %>
+                            <a href="/login" class="login-link">
+                                <i class="fas fa-sign-in-alt"></i> Entrar
+                            </a>
+                            <a href="/cadastro" class="register-link">Cadastrar</a>
+                        <% } %>
+                    </div>
+                    
+                    <div class="cart-icon">
+                        <a href="/carrinho">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cart-count"><%= cartCount || 0 %></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-shopping-cart"></i> Carrinho de Compras</h1>
+            <p>Revise seus produtos antes de finalizar a compra</p>
+        </div>
+    </section>
+
+    <main>
+        <div class="container">
+            <div class="cart-container">
+                <% if (items.length === 0) { %>
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Seu carrinho está vazio</h3>
+                        <p>Que tal explorar nossos produtos profissionais?</p>
+                        <a href="/produtos" class="btn-primary">
+                            <i class="fas fa-box-open"></i>
+                            Explorar Produtos
+                        </a>
+                    </div>
+                <% } else { %>
+                    <div class="cart-grid">
+                        <div class="cart-items">
+                            <% items.forEach(item => { %>
+                                <div class="cart-item">
+                                    <img src="#" alt="<%= item.nome %>" onerror="this.src='/images/products/default.svg'">
+                                    
+                                    <div class="item-info">
+                                        <h3><%= item.nome %></h3>
+                                        <p class="brand"><%= item.marca %> - <%= item.modelo %></p>
+                                        <div class="price">R$ <%= item.preco.toFixed(2).replace('.', ',') %></div>
+                                    </div>
+                                    
+                                    <div class="item-controls">
+                                        <div class="quantity-display">
+                                            <i class="fas fa-box"></i>
+                                            <%= item.quantidade %> un.
+                                        </div>
+                                        <div class="subtotal">
+                                            R$ <%= item.subtotal.toFixed(2).replace('.', ',') %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                        
+                        <div class="cart-summary">
+                            <h3 style="margin-bottom: 24px; color: var(--text-primary);">
+                                <i class="fas fa-receipt"></i> Resumo do Pedido
+                            </h3>
+                            
+                            <div class="summary-row">
+                                <span>Subtotal (<%= items.length %> item<%= items.length > 1 ? 's' : '' %>):</span>
+                                <span>R$ <%= total.toFixed(2).replace('.', ',') %></span>
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>Frete:</span>
+                                <span class="free-shipping">
+                                    <i class="fas fa-truck"></i>
+                                    GRÁTIS
+                                </span>
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>Total:</span>
+                                <span>R$ <%= total.toFixed(2).replace('.', ',') %></span>
+                            </div>
+                            
+                            <% if (user && user.conselho_classe) { %>
+                                <button class="checkout-btn" onclick="window.location.href='/checkout'">
+                                    <i class="fas fa-credit-card"></i>
+                                    Finalizar Compra
+                                </button>
+                                
+                                <div style="margin-top: 20px; padding: 16px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; text-align: center;">
+                                    <i class="fas fa-shield-alt" style="color: var(--accent); margin-right: 8px;"></i>
+                                    <small style="color: var(--accent); font-weight: 500;">
+                                        Compra segura e exclusiva para profissionais
+                                    </small>
+                                </div>
+                            <% } else { %>
+                                <div class="professional-notice">
+                                    <i class="fas fa-user-md"></i>
+                                    <p>É necessário fazer login como profissional de saúde para finalizar a compra.</p>
+                                    <a href="/login" class="btn-primary">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                        Fazer Login
+                                    </a>
+                                </div>
+                            <% } %>
+                            
+                            <div style="margin-top: 24px; text-align: center;">
+                                <a href="/produtos" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Continuar Comprando
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Dr. Derm</h3>
+                    <p>Produtos profissionais para estética e botox, exclusivos para profissionais de saúde certificados.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="/produtos"><i class="fas fa-box"></i> Produtos</a></li>
+                        <li><a href="/sobre"><i class="fas fa-info-circle"></i> Sobre Nós</a></li>
+                        <li><a href="/termos"><i class="fas fa-file-contract"></i> Termos de Uso</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Formas de Pagamento</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-pix" title="PIX"></i>
+                        <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                        <i class="fas fa-university" title="Transferência Bancária"></i>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p><i class="fab fa-whatsapp"></i> WhatsApp: (11) 99396-7438</p>
+                    <p><i class="fas fa-envelope"></i> contato@drderm.com.br</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Dr. Derm. Todos os direitos reservados. | Produtos exclusivos para profissionais de saúde</p>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="https://wa.me/5511993967438?text=Oi%2C%20gostaria%20de%20um%20produto%20ou%20um%20auxilio." class="whatsapp-float" target="_blank" title="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

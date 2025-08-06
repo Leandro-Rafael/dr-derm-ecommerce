@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre - Dr. Derm</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .page-header {
+            background: var(--gradient);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        .about-section {
+            padding: 80px 0;
+        }
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-bottom: 80px;
+        }
+        .about-text h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        .about-image {
+            background: var(--gradient);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+        .about-image i {
+            font-size: 5rem;
+            margin-bottom: 24px;
+            opacity: 0.9;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            margin: 80px 0;
+        }
+        .stat-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-8px);
+        }
+        .stat-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .values-section {
+            background: rgba(37, 99, 235, 0.05);
+            padding: 80px 0;
+            border-radius: 20px;
+            margin: 80px 0;
+        }
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .value-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+        }
+        .value-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .value-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .cta-section {
+            text-align: center;
+            padding: 80px 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .cta-section p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .about-text h2 {
+                font-size: 2rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/logo dr derm.png" alt="Dr. Derm" class="logo-img">
+                </div>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/produtos">Produtos</a></li>
+                        <li><a href="/sobre">Sobre</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <div class="search-box">
+                        <form action="/produtos" method="GET">
+                            <input type="text" name="search" placeholder="Buscar produtos...">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <% if (user) { %>
+                            <a href="/dashboard" class="user-link">
+                                <i class="fas fa-user"></i> <%= user.nome %>
+                            </a>
+                            <a href="/logout" class="logout-link">Sair</a>
+                        <% } else { %>
+                            <a href="/login" class="login-link">
+                                <i class="fas fa-sign-in-alt"></i> Entrar
+                            </a>
+                            <a href="/cadastro" class="register-link">Cadastrar</a>
+                        <% } %>
+                    </div>
+                    
+                    <div class="cart-icon">
+                        <a href="/carrinho">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cart-count"><%= cartCount || 0 %></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-heart"></i> Sobre a Dr. Derm</h1>
+            <p>Conheça nossa história e compromisso com a excelência</p>
+        </div>
+    </section>
+
+    <main>
+        <div class="container">
+            <section class="about-section">
+                <div class="about-content">
+                    <div class="about-text">
+                        <h2>Nossa Missão</h2>
+                        <p>A Dr. Derm nasceu com o propósito de fornecer produtos de alta qualidade exclusivamente para profissionais de saúde especializados em estética e procedimentos com toxina botulínica.</p>
+                        <p>Acreditamos que a beleza e o bem-estar devem ser tratados com seriedade, técnica e produtos de excelência, sempre nas mãos de profissionais qualificados e certificados.</p>
+                        <p>Nossa plataforma conecta médicos, dentistas, biomédicos e outros profissionais de saúde aos melhores produtos do mercado, garantindo segurança e eficácia em cada procedimento.</p>
+                    </div>
+                    <div class="about-image">
+                        <i class="fas fa-user-md"></i>
+                        <h3>Exclusivo para Profissionais</h3>
+                        <p>Produtos certificados apenas para profissionais de saúde registrados em seus respectivos conselhos de classe.</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Profissionais Cadastrados</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-box"></i>
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Produtos Disponíveis</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-shipping-fast"></i>
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Frete Grátis</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <div class="stat-number">24h</div>
+                        <div class="stat-label">Suporte Especializado</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="values-section">
+                <div class="container">
+                    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 48px; color: var(--text-primary);">
+                        Nossos Valores
+                    </h2>
+                    <div class="values-grid">
+                        <div class="value-card">
+                            <h3>
+                                <i class="fas fa-certificate" style="color: var(--primary);"></i>
+                                Qualidade Garantida
+                            </h3>
+                            <p>Trabalhamos apenas com marcas reconhecidas mundialmente, garantindo a procedência e qualidade de todos os produtos.</p>
+                        </div>
+                        <div class="value-card">
+                            <h3>
+                                <i class="fas fa-user-shield" style="color: var(--primary);"></i>
+                                Segurança Profissional
+                            </h3>
+                            <p>Vendas exclusivas para profissionais certificados, garantindo o uso adequado e seguro dos produtos.</p>
+                        </div>
+                        <div class="value-card">
+                            <h3>
+                                <i class="fas fa-clock" style="color: var(--primary);"></i>
+                                Agilidade na Entrega
+                            </h3>
+                            <p>Logística otimizada para garantir que seus produtos cheguem rapidamente e em perfeitas condições.</p>
+                        </div>
+                        <div class="value-card">
+                            <h3>
+                                <i class="fas fa-headset" style="color: var(--primary);"></i>
+                                Suporte Especializado
+                            </h3>
+                            <p>Equipe técnica preparada para esclarecer dúvidas sobre produtos e procedimentos.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta-section">
+                <h2>Pronto para fazer parte da nossa comunidade?</h2>
+                <p>Cadastre-se agora e tenha acesso aos melhores produtos para estética profissional</p>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <a href="/cadastro" class="btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                        Cadastrar-se
+                    </a>
+                    <a href="/produtos" class="btn-primary" style="background: white; color: var(--primary); border: 2px solid var(--primary);">
+                        <i class="fas fa-box-open"></i>
+                        Ver Produtos
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Dr. Derm</h3>
+                    <p>Produtos profissionais para estética e botox, exclusivos para profissionais de saúde certificados.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="/produtos"><i class="fas fa-box"></i> Produtos</a></li>
+                        <li><a href="/sobre"><i class="fas fa-info-circle"></i> Sobre Nós</a></li>
+                        <li><a href="/termos"><i class="fas fa-file-contract"></i> Termos de Uso</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Formas de Pagamento</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-pix" title="PIX"></i>
+                        <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                        <i class="fas fa-university" title="Transferência Bancária"></i>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p><i class="fab fa-whatsapp"></i> WhatsApp: (11) 99396-7438</p>
+                    <p><i class="fas fa-envelope"></i> contato@drderm.com.br</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Dr. Derm. Todos os direitos reservados. | Produtos exclusivos para profissionais de saúde</p>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="https://wa.me/5511993967438?text=Oi%2C%20gostaria%20de%20um%20produto%20ou%20um%20auxilio." class="whatsapp-float" target="_blank" title="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

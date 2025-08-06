@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Dr. Derm - Produtos para Estética' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/logo dr derm.png" alt="Dr. Derm" class="logo-img">
+                </div>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/produtos">Produtos</a></li>
+                        <li><a href="/sobre">Sobre</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <div class="search-box">
+                        <form action="/produtos" method="GET">
+                            <input type="text" name="search" placeholder="Buscar produtos..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <% if (user) { %>
+                            <a href="/dashboard" class="user-link">
+                                <i class="fas fa-user"></i> <%= user.nome %>
+                            </a>
+                            <a href="/logout" class="logout-link">Sair</a>
+                        <% } else { %>
+                            <a href="/login" class="login-link">
+                                <i class="fas fa-sign-in-alt"></i> Entrar
+                            </a>
+                            <a href="/cadastro" class="register-link">Cadastrar</a>
+                        <% } %>
+                    </div>
+                    
+                    <div class="cart-icon">
+                        <a href="/carrinho">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cart-count"><%= cartCount || 0 %></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <%- body %>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Dr. Derm</h3>
+                    <p>Produtos profissionais para estética e botox, exclusivos para profissionais de saúde.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="/produtos">Produtos</a></li>
+                        <li><a href="/sobre">Sobre</a></li>
+                        <li><a href="/termos">Termos de Uso</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Formas de Pagamento</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-pix"></i>
+                        <i class="fas fa-credit-card"></i>
+                        <i class="fas fa-university"></i>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p><i class="fab fa-whatsapp"></i> WhatsApp: (11) 99999-9999</p>
+                    <p><i class="fas fa-envelope"></i> contato@drderm.com.br</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Dr. Derm. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="https://wa.me/5511999999999" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

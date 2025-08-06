@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Derm - Produtos para Estética e Botox</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/logo dr derm.png" alt="Dr. Derm" class="logo-img">
+                </div>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/produtos">Produtos</a></li>
+                        <li><a href="/sobre">Sobre</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <div class="search-box">
+                        <form action="/produtos" method="GET">
+                            <input type="text" name="search" placeholder="Buscar produtos...">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <% if (user) { %>
+                            <a href="/dashboard" class="user-link">
+                                <i class="fas fa-user"></i> <%= user.nome %>
+                            </a>
+                            <a href="/logout" class="logout-link">Sair</a>
+                        <% } else { %>
+                            <a href="/login" class="login-link">
+                                <i class="fas fa-sign-in-alt"></i> Entrar
+                            </a>
+                            <a href="/cadastro" class="register-link">Cadastrar</a>
+                        <% } %>
+                    </div>
+                    
+                    <div class="cart-icon">
+                        <a href="/carrinho">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cart-count"><%= cartCount || 0 %></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-banner">
+            <div class="container">
+                <div class="banner-content">
+                    <h1>Dr. Derm</h1>
+                    <p>Produtos profissionais para estética e botox</p>
+                    <a href="/produtos" class="btn-primary">
+                        <i class="fas fa-arrow-right"></i>
+                        Ver Produtos
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="products-section">
+            <div class="container">
+                <h2><i class="fas fa-fire"></i> Produtos em Promoção</h2>
+                <div class="products-grid">
+                    <% produtos_promocao.forEach(produto => { %>
+                        <div class="product-card">
+                            <div class="new-badge">Promoção</div>
+                            <img src="/images/products/<%= produto.imagem || 'default.svg' %>" alt="<%= produto.nome %>" onerror="this.src='/images/products/default.svg'">
+                            <h3><%= produto.nome %></h3>
+                            <p class="brand"><%= produto.marca %></p>
+                            <div class="price">
+                                <% if (produto.preco_original) { %>
+                                    <span class="old-price">R$ <%= produto.preco_original.toFixed(2).replace('.', ',') %></span>
+                                <% } %>
+                                <span class="current-price">R$ <%= produto.preco.toFixed(2).replace('.', ',') %></span>
+                            </div>
+                            <button class="btn-cart" onclick="addToCart(<%= produto.id %>)">
+                                <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                            </button>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </section>
+
+        <section class="products-section">
+            <div class="container">
+                <h2><i class="fas fa-clock"></i> Oportunidades Especiais</h2>
+                <div class="products-grid">
+                    <% produtos_vencimento.forEach(produto => { %>
+                        <div class="product-card expiry-product">
+                            <div class="expiry-badge">Oportunidade</div>
+                            <img src="#" alt="<%= produto.nome %>" onerror="this.src='/images/products/default.svg'">
+                            <h3><%= produto.nome %></h3>
+                            <p class="brand"><%= produto.marca %></p>
+                            <p class="expiry">Vencimento: <%= new Date(produto.vencimento).toLocaleDateString('pt-BR') %></p>
+                            <div class="price">
+                                <span class="current-price">R$ <%= produto.preco.toFixed(2).replace('.', ',') %></span>
+                            </div>
+                            <button class="btn-cart" onclick="addToCart(<%= produto.id %>)">
+                                <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                            </button>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </section>
+
+        <section class="products-section">
+            <div class="container">
+                <h2><i class="fas fa-star"></i> Novidades</h2>
+                <div class="products-grid">
+                    <% produtos_novidades.forEach(produto => { %>
+                        <div class="product-card">
+                            <div class="new-badge">Novo</div>
+                            <img src="#" alt="<%= produto.nome %>" onerror="this.src='/images/products/default.svg'">
+                            <h3><%= produto.nome %></h3>
+                            <p class="brand"><%= produto.marca %></p>
+                            <% if (produto.indicacao) { %>
+                                <p class="indication"><%= produto.indicacao %></p>
+                            <% } %>
+                            <div class="price">
+                                <span class="current-price">R$ <%= produto.preco.toFixed(2).replace('.', ',') %></span>
+                            </div>
+                            <button class="btn-cart" onclick="addToCart(<%= produto.id %>)">
+                                <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                            </button>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Dr. Derm</h3>
+                    <p>Produtos profissionais para estética e botox, exclusivos para profissionais de saúde certificados.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="/produtos"><i class="fas fa-box"></i> Produtos</a></li>
+                        <li><a href="/sobre"><i class="fas fa-info-circle"></i> Sobre Nós</a></li>
+                        <li><a href="/termos"><i class="fas fa-file-contract"></i> Termos de Uso</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Formas de Pagamento</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-pix" title="PIX"></i>
+                        <i class="fas fa-credit-card" title="Cartão de Crédito"></i>
+                        <i class="fas fa-university" title="Transferência Bancária"></i>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p><i class="fab fa-whatsapp"></i> WhatsApp: (11) 99396-7438</p>
+                    <p><i class="fas fa-envelope"></i> contato@drderm.com.br</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Dr. Derm. Todos os direitos reservados. | Produtos exclusivos para profissionais de saúde</p>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="https://wa.me/5511993967438?text=Oi%2C%20gostaria%20de%20um%20produto%20ou%20um%20auxilio." class="whatsapp-float" target="_blank" title="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
